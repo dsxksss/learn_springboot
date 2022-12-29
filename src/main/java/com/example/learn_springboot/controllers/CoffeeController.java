@@ -20,7 +20,6 @@ public class CoffeeController {
   @GetMapping
   public List<Coffee> getAllCoffees() {
     List<Coffee> coffeeList = coffeeMapper.getAll();
-    System.out.println(coffeeList);
     return coffeeList;
   }
 }
