@@ -11,10 +11,11 @@ import com.example.learn_springboot.mappers.CoffeeMapper;
 // ! 注意 spring test 是同步执行的
 @SpringBootTest
 class LearnSpringbootApplicationTests {
-
+	
 	@Autowired
+	// TODO 待分层测试、同步测试
 	private CoffeeMapper coffeeMapper;
-
+	
 	@Test
 	void testInsert() throws Exception {
 		coffeeMapper.insert(new Coffee(1, "Apple iPad Pro", 899.99, 100, "images/ipadpro.jpg", "The new Apple iPad Pro with 12.9-inch Retina display", 1587882545));
