@@ -31,7 +31,7 @@ import org.apache.ibatis.annotations.Update;
  */
 
 public interface CoffeeMapper {
-  // TODO: 待实现剩下功能
+  // TODO 待完善方法
   @Select("SELECT * FROM coffees")
   List<Coffee> getAll();
 
