@@ -2,11 +2,11 @@ version: '3'
 
 services:
   mysql:
-    image: mysql:5.7.40-debian
+    image: mysql:8.0.31
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: 2546
     ports:
       - 3309:3306
     volumes:
-      - /db/mysql:/var/lib/mysql
+      - ./db/mysql:/var/lib/mysql
