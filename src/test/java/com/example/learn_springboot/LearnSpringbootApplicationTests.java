@@ -18,9 +18,9 @@ class LearnSpringbootApplicationTests {
 	
 	@Test
 	void testInsert() throws Exception {
-		coffeeMapper.insert(new Coffee(1, "Apple iPad Pro", 899.99, 100, "images/ipadpro.jpg", "The new Apple iPad Pro with 12.9-inch Retina display", 1587882545));
-		coffeeMapper.insert(new Coffee(2, "Samsung Galaxy S20", 699.99, 200, "images/s20.jpg", "The new Samsung Galaxy S20 with 6.2-inch Infinity-O Display", 1588067345));
-		coffeeMapper.insert(new Coffee(3, "Xiaomi Mi Note 10", 399.99, 300, "images/minote10.jpg", "The new Xiaomi Mi Note 10 with 6.47-inch AMOLED display", 1588251745));
+		coffeeMapper.insert(new Coffee(1, "咖啡", 10.00, 10, "coffee.jpg", "精选阿拉比卡咖啡豆，口感醇厚，滋味浓郁", 1588503568));
+		coffeeMapper.insert(new Coffee(2, "拿铁咖啡", 15.00, 15, "latte.jpg", "拿铁咖啡以热牛奶和浓缩咖啡调制而成，口感香浓，醇厚", 1588503568));
+		coffeeMapper.insert(new Coffee(3, "卡布奇诺", 20.00, 20, "cappuccino.jpg", "卡布奇诺以浓缩咖啡、牛奶和奶泡调制而成，口感醇厚，香浓", 1588503568));
 		Assert.isTrue(3==coffeeMapper.getAll().size(), "testInsert error !");
 	}
 	
