@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString // 生成toString方法
 public class Coffee{
 
-  private Integer id; // 产品ID
+  private String id; // 产品ID
   private String name; // 产品名称
   private double price; // 产品价格
   private Integer quantity; // 售卖数量

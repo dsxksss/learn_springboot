@@ -36,7 +36,7 @@ public interface CoffeeMapper {
   List<Coffee> getAll();
 
   @Select("SELECT * FROM coffees WHERE id = #{id}")
-  Coffee getOne(Integer id);
+  Coffee getOne(String id);
 
   @Insert(
     "INSERT INTO coffees(id,name,price,quantity,image,description,createTime) VALUES(#{id},#{name},#{price},#{quantity},#{image},#{description},#{createTime}) "
@@ -47,6 +47,8 @@ public interface CoffeeMapper {
   void update(Coffee coffee);
   
   @Delete("DELETE FROM coffees WHERE id=#{id}")
-  void delete(Integer id);
+  void delete(String id);
   
+  @Delete("DELETE FROM coffees")
+  void deleteAll();
 }
