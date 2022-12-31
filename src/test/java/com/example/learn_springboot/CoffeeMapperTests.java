@@ -67,6 +67,8 @@ public class CoffeeMapperTests {
     Assert.isTrue(coffeeMapper.getAll().size() >= 0, "testQuery error !");
   }
 
+  // TODO 获取单个咖啡信息是否成功test
+
   @Test
   @Order(3)
   void testUpdate() throws Exception {
