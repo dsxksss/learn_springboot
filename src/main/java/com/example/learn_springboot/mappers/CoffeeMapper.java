@@ -2,7 +2,6 @@ package com.example.learn_springboot.mappers;
 
 import com.example.learn_springboot.entitys.Coffee;
 import java.util.List;
-
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
@@ -42,13 +41,15 @@ public interface CoffeeMapper {
     "INSERT INTO coffees(id,name,price,quantity,image,description,createTime) VALUES(#{id},#{name},#{price},#{quantity},#{image},#{description},#{createTime}) "
   )
   void insert(Coffee coffee);
-  
-  @Update("UPDATE coffees SET name=#{name},description=#{description} WHERE id=#{id}")
+
+  @Update(
+    "UPDATE coffees SET name=#{name},description=#{description} WHERE id=#{id}"
+  )
   void update(Coffee coffee);
-  
+
   @Delete("DELETE FROM coffees WHERE id=#{id}")
   void delete(String id);
-  
+
   @Delete("DELETE FROM coffees")
   void deleteAll();
 }

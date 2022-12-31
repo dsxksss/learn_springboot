@@ -1,15 +1,15 @@
 package com.example.learn_springboot;
 
-import java.util.UUID;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Order;
-import org.springframework.util.Assert;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
 import com.example.learn_springboot.entitys.Coffee;
 import com.example.learn_springboot.mappers.CoffeeMapper;
+import java.util.UUID;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.Assert;
 
 @SpringBootTest
 // 这里使用了按顺序执行
@@ -17,10 +17,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 // 用于配置方法的执行顺序，数字越低执行顺序越高
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CoffeeMapperTests {
-    @Autowired
+
+  @Autowired
   private CoffeeMapper coffeeMapper;
 
-   @Test
+  @Test
   @Order(1)
   void testInsert() throws Exception {
     coffeeMapper.insert(

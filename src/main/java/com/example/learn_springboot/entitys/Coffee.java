@@ -9,7 +9,7 @@ import lombok.ToString;
 @AllArgsConstructor // 生成有参构造方法
 @NoArgsConstructor // 生成无参构造方法
 @ToString // 生成toString方法
-public class Coffee{
+public class Coffee {
 
   private String id; // 产品ID
   private String name; // 产品名称

@@ -1,4 +1,5 @@
 package com.example.learn_springboot;
+
 import org.springframework.boot.test.context.SpringBootTest;
 
 /*
@@ -21,8 +22,4 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 // ! 注意 spring test 是同步执行的
 @SpringBootTest
-
-class LearnSpringbootApplicationTests {
-
- 
-}
+class LearnSpringbootApplicationTests {}
