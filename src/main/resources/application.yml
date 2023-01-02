@@ -7,3 +7,12 @@ spring:
         username: root
         password: 2546
         driver-class-name: com.mysql.cj.jdbc.Driver
+    jpa:
+        # 执行数据库操作时显示执行的sql
+        show-sql: true
+        hibernate:
+            # create:启动时删除原表 后创建表 结束后不操作
+            # create-drop:启动时删除原表 后创建表 结束后删除表 如果表不存在会报错
+            # update:启动时自动更新表字段结构 原有数据保留
+            # validate:启动时校验表字段结构 如果不一致则报错
+            ddl-auto: create

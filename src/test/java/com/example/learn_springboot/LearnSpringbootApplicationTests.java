@@ -3,7 +3,7 @@ package com.example.learn_springboot;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /*
- * @SpringBootTest	用于指定测试类启用Spring Boot Test，默认会提供Mock环境
+ *  @SpringBootTest	用于指定测试类启用Spring Boot Test，默认会提供Mock环境
  *  @ExtendWith	如果只想启用Spring环境进行简单测试，不想启用Spring Boot环境，可以配置扩展为：SpringExtension
  *  @Test	指定方法为测试方法
  *  @TestMethodOrder	用于配置测试类中方法的执行顺序策略，配置为OrderAnnotation时，按@Order顺序执行

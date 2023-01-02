@@ -1,13 +1,14 @@
 package com.example.learn_springboot;
 
 import com.example.learn_springboot.entitys.Coffee;
-import com.example.learn_springboot.mappers.CoffeeMapper;
+import com.example.learn_springboot.repositorys.CoffeeRep;
+import java.util.List;
 import java.util.UUID;
+import javax.annotation.Resource;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
 
@@ -16,15 +17,15 @@ import org.springframework.util.Assert;
 // 下列方法中的@Order注解表示执行的顺序
 // 用于配置方法的执行顺序，数字越低执行顺序越高
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CoffeeMapperTests {
+public class CoffeeRepTests {
 
-  @Autowired
-  private CoffeeMapper coffeeMapper;
+  @Resource
+  private CoffeeRep coffeeRep;
 
   @Test
   @Order(1)
   void testInsert() throws Exception {
-    coffeeMapper.insert(
+    coffeeRep.save(
       new Coffee(
         "1",
         "咖啡",
@@ -35,7 +36,7 @@ public class CoffeeMapperTests {
         1588503568
       )
     );
-    coffeeMapper.insert(
+    coffeeRep.save(
       new Coffee(
         "2",
         "拿铁咖啡",
@@ -46,7 +47,7 @@ public class CoffeeMapperTests {
         1588503568
       )
     );
-    coffeeMapper.insert(
+    coffeeRep.save(
       new Coffee(
         "3",
         "卡布奇诺",
@@ -57,44 +58,50 @@ public class CoffeeMapperTests {
         1588503568
       )
     );
-    Assert.isTrue(3 == coffeeMapper.getAll().size(), "testInsert error !");
+    Assert.isTrue(coffeeRep.findAll().size() == 3, "insertTest expected!");
   }
 
   @Test
   @Order(2)
   void testQuery() throws Exception {
-    System.out.println(coffeeMapper.getAll());
-    Assert.isTrue(coffeeMapper.getAll().size() >= 0, "testQuery error !");
+    Assert.isTrue(
+      !coffeeRep.findById("1").isEmpty(),
+      "test Query Single expected!"
+    );
+    Assert.isTrue(coffeeRep.findAll().size() > 0, "test Query All expected!");
   }
-
-  // TODO 获取单个咖啡信息是否成功test
 
   @Test
   @Order(3)
   void testUpdate() throws Exception {
-    Coffee coffee = coffeeMapper.getOne("3");
-    System.out.println(coffee);
-    coffee.setName("test test test !!!");
-    coffeeMapper.update(coffee);
+    Coffee oldCoffee = coffeeRep.findById("3").get();
+    oldCoffee.setName("test update ! ! !");
+    // save()方法在不指定主键的情况下，即实体对象的主键为null时，执行的是insert操作，
+    // 而在指定主键的情况下，执行的操作为update操作
+    coffeeRep.save(oldCoffee);
+    Coffee newCoffee = coffeeRep.findById("3").get();
     Assert.isTrue(
-      coffee.getName().equals(coffeeMapper.getOne("3").getName()),
-      "testUpdate error !"
+      newCoffee.getName().equals(oldCoffee.getName()),
+      "testUpdate expected!"
     );
   }
 
   @Test
   @Order(4)
   void testDelete() throws Exception {
-    coffeeMapper.delete("1");
-    coffeeMapper.delete("2");
-    coffeeMapper.delete("3");
+    coffeeRep.deleteById("1");
+    Assert.isTrue(
+      coffeeRep.findAll().size() == 2,
+      "test Delete Single expected!"
+    );
 
-    Assert.isTrue(coffeeMapper.getAll().size() == 0, "testDelete error !");
+    coffeeRep.deleteAll();
+    Assert.isTrue(coffeeRep.findAll().size() == 0, "test Delete All expected!");
   }
 
   @Test
-  void testDeleteAll() throws Exception {
-    coffeeMapper.insert(
+  void testInsertAll() throws Exception {
+    List<Coffee> coffeeList = List.of(
       new Coffee(
         UUID.randomUUID().toString(),
         "咖啡",
@@ -103,9 +110,7 @@ public class CoffeeMapperTests {
         "coffee.jpg",
         "精选阿拉比卡咖啡豆，口感醇厚，滋味浓郁",
         1588503568
-      )
-    );
-    coffeeMapper.insert(
+      ),
       new Coffee(
         UUID.randomUUID().toString(),
         "拿铁咖啡",
@@ -114,9 +119,7 @@ public class CoffeeMapperTests {
         "latte.jpg",
         "拿铁咖啡以热牛奶和浓缩咖啡调制而成，口感香浓，醇厚",
         1588503568
-      )
-    );
-    coffeeMapper.insert(
+      ),
       new Coffee(
         UUID.randomUUID().toString(),
         "卡布奇诺",
@@ -128,8 +131,7 @@ public class CoffeeMapperTests {
       )
     );
 
-    coffeeMapper.deleteAll();
-
-    Assert.isTrue(coffeeMapper.getAll().size() == 0, "testDeleteAll error!");
+    coffeeRep.saveAll(coffeeList);
+    Assert.isTrue(coffeeRep.findAll().size() == 3, "test Insert All expected!");
   }
 }
