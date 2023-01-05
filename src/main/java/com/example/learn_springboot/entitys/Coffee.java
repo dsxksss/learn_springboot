@@ -4,6 +4,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,29 +18,37 @@ import lombok.ToString;
 @ToString // 生成toString方法
 @Entity // 表示我是一个实体类
 @Table(name = "coffees") // 对应生成的表名
+@ApiModel(description = "咖啡商品信息模型")
 public class Coffee {
 
   // 表生成方式
   // @GeneratedValue(strategy = GenerationType.IDENTITY) // 按自增id生成
   @Id // 表示主键
   @Column(name = "id") // 表字段名
-  private String id; // 产品ID
-
+  @ApiModelProperty("咖啡商品ID")
+  private String id;
+  
   @Column(name = "name")
-  private String name; // 产品名称
-
+  @ApiModelProperty("咖啡名称")
+  private String name;
+  
   @Column(name = "price")
-  private double price; // 产品价格
-
+  @ApiModelProperty("咖啡价格")
+  private double price;
+  
   @Column(name = "quantity")
-  private Integer quantity; // 售卖数量
-
+  @ApiModelProperty("售卖数量")
+  private Integer quantity;
+  
   @Column(name = "image")
-  private String image; // 产品图片
-
+  @ApiModelProperty("咖啡图片地址")
+  private String image;
+  
   @Column(name = "description")
-  private String description; // 产品描述
-
+  @ApiModelProperty("咖啡商品描述")
+  private String description;
+  
   @Column(name = "createTime")
-  private long createTime; // 创建时间
+  @ApiModelProperty("商品创建时间")
+  private long createTime;
 }
