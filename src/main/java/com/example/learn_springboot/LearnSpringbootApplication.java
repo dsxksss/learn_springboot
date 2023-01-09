@@ -5,9 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class LearnSpringbootApplication {
-
-  // TODO 待创建init类处理自动生成数据表模板工作
-
   public static void main(String[] args) {
     SpringApplication.run(LearnSpringbootApplication.class, args);
   }

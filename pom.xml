@@ -18,6 +18,11 @@
 		<java.version>8</java.version>
 	</properties>
 	<dependencies>
+		<!-- spring boot  日志依赖 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-logging</artifactId>
+		</dependency>
 		<!-- spring boot web 应用程序依赖 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -34,12 +39,12 @@
 			<artifactId>springfox-boot-starter</artifactId>
 			<version>3.0.0</version>
 		</dependency>
-		<!-- spring boot jpa 依赖 -->
+		<!-- spring boot jpa依赖 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-		<!-- mysql 驱动 依赖 -->
+		<!-- mysql 驱动依赖 -->
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
@@ -51,7 +56,7 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<!--  sprint boot test 依赖 -->
+		<!--  spring boot test依赖 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
