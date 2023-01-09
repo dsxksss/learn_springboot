@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- scan: 是否自动扫描并生效本文件配置改动 -->
+<!-- scanPeriod: 检测配置发生变化的时间间隔 如果没给出时间单位 默认时间单位是毫秒 -->
+<configuration scan="true" scanPeriod="3 seconds">
+    <!-- 导入其他配置文件，作为预设 -->
+    <!-- 该配置文件是自带的默认配置 -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <!-- appender表示日志打印器配置 命名可以自定义 -->
+    <!-- ch.qos.logback.core.ConsoleAppender 表示该appender是专门用于控制台显示的appender -->
+    <!-- 这里配置控制台打印日志 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- 以下两个配置是encoder必要的 -->
+            <!-- 显示格式设置 -->
+            <!-- 这里使用预设的格式 -->
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <!-- 显示字符编码设置 -->
+            <charset>${CONSOLE_LOG_CHARSET}</charset>
+        </encoder>
+    </appender>
+    <!-- 这里配置文件打印日志 -->
+    <!-- ch.qos.logback.core.rolling.RollingFileAppender 表示该appender是专门用于文件显示的appender -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <!-- 以下两个配置是encoder必要的 -->
+            <!-- 显示格式设置 -->
+            <!-- 这里使用预设的file格式 -->
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <!-- 保存的file字符编码设置 -->
+            <charset>${FILE_LOG_CHARSET}</charset>
+        </encoder>
+        <!-- 自定义滚动策略 防止日志文件不清理 无限变大 -->
+        <!-- 让日志文件写到一定数量就创建一个新的日志文件开始写 -->
+        <!-- ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy 表示默认的滚动配置 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 文件保存位置及文件的命名设置 这里用到的%d{yyyy-MM-dd}表示当前的日期 %i表示这一天里的第几个日志 -->
+            <FileNamePattern>log/learn-srping-boot%d{yyyy-MM-dd}-%i.log</FileNamePattern>
+            <!-- 到期自动清理日志文件 防止日志文件堆叠 -->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            <!-- 最大的日志保留时间 这里设置为7天 -->
+            <maxHistory>7</maxHistory>
+            <!-- 最大的单个日志文件大小 这里设置为10MB每个文件 -->
+            <maxFileSize>10MB</maxFileSize>
+        </rollingPolicy>
+    </appender>
+    <!-- 日志级别 TRACE < DEBUG < INFO < WARN < ERROR < FATAL 默认只会打印INFO以上级别的信息 -->
+    <!-- 指定日志的输出级别，以及启用appender配置，这里就使用了我们上面的ConsoleAppender配置 -->
+    <root level="INFO">
+        <!-- ref属性填要启用的appender对应的name属性内容 -->
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>

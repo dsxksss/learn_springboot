@@ -18,6 +18,11 @@
 		<java.version>8</java.version>
 	</properties>
 	<dependencies>
+		<!-- spring boot  日志依赖 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-logging</artifactId>
+		</dependency>
 		<!-- spring boot web 应用程序依赖 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -51,7 +56,7 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<!--  sprint boot test 依赖 -->
+		<!--  spring boot test 依赖 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
