@@ -2,6 +2,9 @@ package com.example.learn_springboot.controllers;
 
 import com.example.learn_springboot.entitys.Coffee;
 import com.example.learn_springboot.mappers.CoffeeMapper;
+
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -24,12 +27,20 @@ import org.springframework.web.server.ResponseStatusException;
  *购买某款咖啡：POST /coffees/{id}/purchase
  */
 
+
+//这是slf4j的接口，由于我们引入了logback-classic依赖，所以底层实现是logback
+// private static final Logger LOGGER = LoggerFactory.getLogger(Test.class);
+// 使用lombok自带的Slf4j注解 可以实现和上方代码相同的事情
+// 只不过调用日志对象要使用log.xxx 来使用
+@Slf4j
 @RestController
 // 路由根路径
 @RequestMapping("/coffees")
 public class CoffeeController {
 
-  // TODO 待增加post、put、delete方法
+  // TODO 待完善日志显示
+  // TODO 待增加put、delete方法
+  
   @Autowired
   private CoffeeMapper coffeeMapper;
 
@@ -37,6 +48,7 @@ public class CoffeeController {
   // 使用URL例子 : http://localhost:2546/coffees/
   @GetMapping
   public List<Coffee> getCoffees() {
+    log.info("getCoffees执行~"); 
     List<Coffee> coffeeList = coffeeMapper.getAll();
     return coffeeList;
   }
