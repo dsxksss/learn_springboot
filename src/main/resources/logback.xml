@@ -45,9 +45,22 @@
     </appender>
     <!-- 日志级别 TRACE < DEBUG < INFO < WARN < ERROR < FATAL 默认只会打印INFO以上级别的信息 -->
     <!-- 指定日志的输出级别，以及启用appender配置，这里就使用了我们上面的ConsoleAppender配置 -->
-    <root level="INFO">
-        <!-- ref属性填要启用的appender对应的name属性内容 -->
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
-    </root>
+    <!-- springProfile 可以用来定义日志的多环境配置 -->
+    <!-- 多环境配置的启用是根据springboot的application配置来决定的 -->
+    <!-- 这里是dev环境下的配置 -->
+    <springProfile name="dev">
+        <root level="INFO">
+            <!-- ref属性填要启用的appender对应的name属性内容 -->
+            <appender-ref ref="CONSOLE" />
+            <appender-ref ref="FILE" />
+        </root>
+    </springProfile>
+
+    <!-- 这里是prod环境下的配置 -->
+    <springProfile name="prod">
+        <root level="INFO">
+            <!-- ref属性填要启用的appender对应的name属性内容 -->
+            <appender-ref ref="FILE" />
+        </root>
+    </springProfile>
 </configuration>

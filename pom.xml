@@ -17,6 +17,32 @@
 	<properties>
 		<java.version>8</java.version>
 	</properties>
+	<!--分别设置开发，生产环境-->
+	<profiles>
+		<!-- 开发环境 -->
+		<profile>
+			<!-- 环境id标识符 -->
+			<id>dev</id>
+			<activation>
+				<!-- 默认启用开发环境 -->
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<!-- environment里定义环境名 -->
+				<environment>dev</environment>
+			</properties>
+		</profile>
+		<!-- 生产环境 -->
+		<profile>
+			<id>prod</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<environment>prod</environment>
+			</properties>
+		</profile>
+	</profiles>
 	<dependencies>
 		<!-- spring boot  日志依赖 -->
 		<dependency>
@@ -64,6 +90,28 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<resources>
+			<!--排除配置文件-->
+			<resource>
+				<directory>src/main/resources</directory>
+				<!--先排除所有的配置文件-->
+				<excludes>
+					<!--使用通配符，当然可以定义多个exclude标签进行排除-->
+					<exclude>application*.yml</exclude>
+				</excludes>
+			</resource>
+			<!--根据激活条件引入打包所需的配置和文件-->
+			<resource>
+				<directory>src/main/resources</directory>
+				<!--引入所需环境的配置文件-->
+				<filtering>true</filtering>
+				<includes>
+					<include>application.yml</include>
+					<!--根据maven选择环境导入配置文件-->
+					<include>application-${environment}.yml</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
