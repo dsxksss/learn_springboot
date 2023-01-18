@@ -44,7 +44,12 @@
 		</profile>
 	</profiles>
 	<dependencies>
-		<!-- spring boot  日志依赖 -->
+		<!-- spring boot redis依赖 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<!-- spring boot 日志依赖 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-logging</artifactId>

@@ -3,10 +3,22 @@ version: '3'
 services:
   mysql:
     image: mysql:8.0.31
-    container_name: mysql
+    restart: always
+    container_name: mysql8.0.31
     environment:
       MYSQL_ROOT_PASSWORD: 2546
     ports:
       - 3309:3306
     volumes:
       - ./db/mysql:/var/lib/mysql
+  redis:
+    image: redis:latest
+    restart: always
+    container_name: redis
+    command:
+      --requirepass "2546" #这一行是设置密码
+    ports:
+      - 3310:6379
+    volumes:
+      - ./db/redis:/var/lib/redis
+    # privileged: true      #使用该参数，container内的root拥有真正的root权限
