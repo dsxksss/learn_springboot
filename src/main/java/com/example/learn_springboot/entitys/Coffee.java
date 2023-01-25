@@ -1,16 +1,46 @@
 package com.example.learn_springboot.entitys;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.Length;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+/*
+  * JSR提供的校验注解：
+      * @Null 被注释的元素必须为null
+      * @NotNull 被注释的元素必须不为null
+      * @AssertTrue 被注释的元素必须为true
+      * @AssertFalse 被注释的元素必须为false
+      * @Min(value) 被注释的元素必须是一个数字，其值必须大于等于指定的最小值
+      * @Max(value) 被注释的元素必须是一个数字，其值必须小于等于指定的最大值
+      * @DecimalMin(value) 被注释的元素必须是一个数字，其值必须大于等于指定的最小值
+      * @DecimalMax(value) 被注释的元素必须是一个数字，其值必须小于等于指定的最大值
+      * @Size(max=,min=) 被注释的元素的大小必须在指定的范围内
+      * @Digits(integer, fraction) 被注释的元素必须是一个数字，其值必须在可接受的范围内
+      * @Past 被注释的元素必须是一个过去的日期
+      * @Future 被注释的元素必须是一个将来的日期
+      * @Pattern(regex=,flag=) 被注释的元素必须符合指定的正则表达式
+
+  * HibernateValidator提供的校验注解：
+      * @NotBlank(message=) 验证字符串非null，且trim后长度必须大于0
+      * @Email 被注释的元素必须是电子邮箱地址
+      * @Length(min=,max=) 被注释的字符串的大小必须在指定的范围内
+      * @NotEmpty 被注释的字符串的必须非空
+      * @Range(min=,max=,message=) 被注释的元素必须在合适的范围内
+ */
+
+// TODO 待补充完整验证模板
 
 @Data // 包含属性的SetGet方法
 @AllArgsConstructor // 生成有参构造方法
@@ -27,27 +57,30 @@ public class Coffee {
   @Column(name = "id") // 表字段名
   @ApiModelProperty("咖啡商品ID")
   private String id;
-  
+
   @Column(name = "name")
   @ApiModelProperty("咖啡名称")
   private String name;
-  
+
   @Column(name = "price")
   @ApiModelProperty("咖啡价格")
   private double price;
-  
+
   @Column(name = "quantity")
+  @Min(15)
+  @Max(30)
   @ApiModelProperty("售卖数量")
   private Integer quantity;
-  
+
   @Column(name = "image")
   @ApiModelProperty("咖啡图片地址")
   private String image;
-  
+
   @Column(name = "description")
+  @Length(min = 0,max = 150)
   @ApiModelProperty("咖啡商品描述")
   private String description;
-  
+
   @Column(name = "createTime")
   @ApiModelProperty("商品创建时间")
   private long createTime;

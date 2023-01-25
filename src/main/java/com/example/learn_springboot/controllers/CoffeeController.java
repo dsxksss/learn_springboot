@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.annotation.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,6 +43,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 // 路由根路径
 @RequestMapping("/coffees")
+// 校验
+@Validated
 public class CoffeeController {
 
   // TODO 验证客户端数据是否有效且格式有效
