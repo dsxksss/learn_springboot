@@ -44,6 +44,11 @@
 		</profile>
 	</profiles>
 	<dependencies>
+		<!-- spring boot validation数据验证依赖 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
 		<!-- spring boot redis依赖 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
