@@ -64,6 +64,8 @@ public class CoffeeController {
   )
   @GetMapping
   public List<Coffee> getCoffees() {
+
+    // FIXME: 中文输出至日志后有乱码问题
     log.info("开始执行getCoffees~"); // 测试日志是否有效
     List<Coffee> coffeeList = coffeeRep.findAll();
 
@@ -88,7 +90,7 @@ public class CoffeeController {
   )
   @GetMapping("/{id}")
   // @PathVariable 会去搜索path上是否有被{}包裹起来的同名的id值
-  //! 并且表示该值作用于下方的参数中 , 需注意同名
+  // ! 并且表示该值作用于下方的参数中 , 需注意同名
   public Coffee getCoffee(
     @PathVariable @ApiParam("要获取某个咖啡商品信息的id") String id
   ) {
