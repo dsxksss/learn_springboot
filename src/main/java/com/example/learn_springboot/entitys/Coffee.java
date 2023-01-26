@@ -6,13 +6,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import org.hibernate.validator.constraints.Length;
-
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
 
 /*
   * JSR提供的校验注解：
@@ -58,23 +60,34 @@ public class Coffee {
 
   @Column(name = "name")
   @ApiModelProperty("咖啡名称")
+  @NotBlank(message = "咖啡名称不能为空")
+  @Length(min = 2, max = 10)
   private String name;
 
   @Column(name = "price")
   @ApiModelProperty("咖啡价格")
+  @Min(value = 0, message = "咖啡价格不能低于0")
+  @Max(value = 100000, message = "咖啡价格不能大于100000")
+  @NotNull(message = "咖啡价格不能为空")
   private double price;
-
+  
   @Column(name = "quantity")
   @ApiModelProperty("售卖数量")
+  @NotNull(message = "咖啡数量不能为空")
+  @Min(value = 1, message = "咖啡数量不能低于1")
+  @Max(value = 10000, message = "咖啡数量不能大于10000")
   private Integer quantity;
 
   @Column(name = "image")
   @ApiModelProperty("咖啡图片地址")
+  @NotBlank(message = "咖啡图片不能为空")
+  @Length(min = 1, max = 255, message = "咖啡图片地址长度只能是1至255之间")
   private String image;
 
   @Column(name = "description")
-  @Length(min = 0,max = 150)
   @ApiModelProperty("咖啡商品描述")
+  @NotBlank(message = "咖啡描述不能为空")
+  @Length(min = 1, max = 255, message = "咖啡描述长度只能是1至255之间")
   private String description;
 
   @Column(name = "createTime")

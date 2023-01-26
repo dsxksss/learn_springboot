@@ -7,12 +7,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,7 +33,7 @@ import org.springframework.web.server.ResponseStatusException;
  *购买某款咖啡：POST /coffees/{id}/purchase
  */
 
- //这是slf4j的接口，由于我们引入了logback-classic依赖，所以底层实现是logback
+//这是slf4j的接口，由于我们引入了logback-classic依赖，所以底层实现是logback
 // private static final Logger LOGGER = LoggerFactory.getLogger(Test.class);
 // 使用lombok自带的Slf4j注解 可以实现和上方代码相同的事情
 // 只不过调用日志对象要使用log.xxx 来使用
@@ -43,11 +42,9 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 // 路由根路径
 @RequestMapping("/coffees")
-// 校验
-@Validated
 public class CoffeeController {
 
-  // TODO 验证客户端数据是否有效且格式有效
+  // TODO 验证客户端数据是否有效且格式有效 (%10)
   // TODO 实现权限访问
   // TODO redis缓存层
 
@@ -67,7 +64,6 @@ public class CoffeeController {
   )
   @GetMapping
   public List<Coffee> getCoffees() {
-
     // FIXME: 中文输出至日志后有乱码问题
     log.info("开始执行getCoffees~"); // 测试日志是否有效
     List<Coffee> coffeeList = coffeeRep.findAll();
@@ -114,7 +110,7 @@ public class CoffeeController {
     }
   )
   @PostMapping
-  public Coffee addCoffee(@RequestBody Coffee coffee) {
+  public Coffee addCoffee(@Validated @RequestBody Coffee coffee) {
     Coffee newCoffee = coffee;
     // 生成ID
     newCoffee.setId(UUID.randomUUID().toString());
