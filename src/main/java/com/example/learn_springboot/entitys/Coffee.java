@@ -6,8 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -40,7 +38,7 @@ import lombok.ToString;
       * @Range(min=,max=,message=) 被注释的元素必须在合适的范围内
  */
 
-// TODO 待补充完整验证模板
+// TODO 待补充数据验证格式
 
 @Data // 包含属性的SetGet方法
 @AllArgsConstructor // 生成有参构造方法
@@ -67,8 +65,6 @@ public class Coffee {
   private double price;
 
   @Column(name = "quantity")
-  @Min(15)
-  @Max(30)
   @ApiModelProperty("售卖数量")
   private Integer quantity;
 
