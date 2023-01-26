@@ -78,6 +78,8 @@ public class CoffeeRepTests {
     oldCoffee.setName("test update ! ! !");
     // save()方法在不指定主键的情况下，即实体对象的主键为null时，执行的是insert操作，
     // 而在指定主键的情况下，执行的操作为update操作
+
+    //FIXME 有时候save同一个事务save两次会报 org.springframework.transaction.TransactionSystemException: Could not commit JPA transaction; nested exception is javax.persistence.RollbackException: Error while committing the transaction
     coffeeRep.save(oldCoffee);
     Coffee newCoffee = coffeeRep.findById("3").get();
     Assert.isTrue(
