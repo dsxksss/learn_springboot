@@ -3,6 +3,8 @@ package com.example.learn_springboot.controllers;
 import com.example.learn_springboot.entitys.Coffee;
 import com.example.learn_springboot.repositorys.CoffeeRep;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -44,7 +46,7 @@ import org.springframework.web.server.ResponseStatusException;
 // 路由根路径
 @RequestMapping("/coffees")
 public class CoffeeController {
-  
+
   // TODO 实现权限访问
   // TODO redis缓存层
 
@@ -92,7 +94,7 @@ public class CoffeeController {
   // ! 并且表示该值作用于下方的参数中 , 需注意同名
   public Coffee getCoffee(
     @NotBlank(message = "id不能为空") @PathVariable @ApiParam(
-      "要获取某个咖啡商品信息的id"
+      "咖啡id"
     ) String id
   ) {
     // 如果没找到的话 则返回404状态码
@@ -112,7 +114,10 @@ public class CoffeeController {
     }
   )
   @PostMapping
-  public Coffee addCoffee(@Validated @RequestBody Coffee coffee) {
+  public Coffee addCoffee(
+    // TODO 待补充对象api字段说明
+    @Validated @RequestBody @ApiParam("要添加的商品信息") Coffee coffee
+  ) {
     Coffee newCoffee = coffee;
     // 生成ID
     newCoffee.setId(UUID.randomUUID().toString());
@@ -132,7 +137,9 @@ public class CoffeeController {
   )
   @PutMapping("/{id}")
   public Coffee updateCoffee(
-    @NotBlank(message = "id不能为空") @PathVariable String id,
+    @NotBlank(message = "id不能为空") @PathVariable @ApiParam(
+      "咖啡id"
+    ) String id,
     @Validated @RequestBody Coffee reqCoffee
   ) {
     // 如果没找到的话 则返回404状态码
@@ -157,7 +164,9 @@ public class CoffeeController {
   )
   @DeleteMapping("/{id}")
   public Coffee delectCoffee(
-    @NotBlank(message = "id不能为空") @PathVariable String id
+    @NotBlank(message = "id不能为空") @PathVariable @ApiParam(
+      "咖啡id"
+    ) String id
   ) {
     // 如果没找到的话 则返回404状态码
     if (!coffeeRep.existsById(id)) throw new ResponseStatusException(
