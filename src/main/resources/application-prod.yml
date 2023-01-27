@@ -23,10 +23,6 @@ spring:
             ddl-auto: update
         # 设置默认view为false消除警告
         open-in-view: false
-    mvc:
-        # swaggerAPI配置 
-        pathmatch:
-            matching-strategy: ANT_PATH_MATCHER
     redis:
         # Redis数据库索引(默认为0)
         database: 0

@@ -1,5 +1,6 @@
 package com.example.learn_springboot.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -28,6 +29,9 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 public class SwaggerConfig {
 
+  @Value("${spring.profiles.active:NA}")
+    private String active;
+
   private ApiInfo apiInfo() {
     return new ApiInfoBuilder()
       .contact(
@@ -43,6 +47,7 @@ public class SwaggerConfig {
   public Docket docket() {
     return new Docket(DocumentationType.OAS_30)
       // api文档简介
+      .enable("dev".equals(active))  // 仅在开发环境开启Swagger
       .apiInfo(apiInfo())
       // 限制只有哪些api才会被选择并生成文档
       .select()
