@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.Resource;
+import javax.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -43,8 +44,7 @@ import org.springframework.web.server.ResponseStatusException;
 // 路由根路径
 @RequestMapping("/coffees")
 public class CoffeeController {
-
-  // TODO 验证客户端数据是否有效且格式有效 (%10)
+  
   // TODO 实现权限访问
   // TODO redis缓存层
 
@@ -91,7 +91,9 @@ public class CoffeeController {
   // @PathVariable 会去搜索path上是否有被{}包裹起来的同名的id值
   // ! 并且表示该值作用于下方的参数中 , 需注意同名
   public Coffee getCoffee(
-    @PathVariable @ApiParam("要获取某个咖啡商品信息的id") String id
+    @NotBlank(message = "id不能为空") @PathVariable @ApiParam(
+      "要获取某个咖啡商品信息的id"
+    ) String id
   ) {
     // 如果没找到的话 则返回404状态码
     if (!coffeeRep.existsById(id)) throw new ResponseStatusException(
@@ -130,19 +132,20 @@ public class CoffeeController {
   )
   @PutMapping("/{id}")
   public Coffee updateCoffee(
-    @PathVariable String id,
-    @RequestBody Coffee reqCoffee
+    @NotBlank(message = "id不能为空") @PathVariable String id,
+    @Validated @RequestBody Coffee reqCoffee
   ) {
     // 如果没找到的话 则返回404状态码
     if (!coffeeRep.existsById(id)) throw new ResponseStatusException(
       HttpStatus.NOT_FOUND
     );
-    Coffee oldCoffee = reqCoffee;
-    Coffee newCoffee = coffeeRep.findById(id).get();
-    oldCoffee.setId(newCoffee.getId());
-    oldCoffee.setCreateTime(newCoffee.getCreateTime());
-    coffeeRep.save(reqCoffee);
-    return newCoffee;
+
+    Coffee coffee = reqCoffee;
+    Coffee oldCoffee = coffeeRep.findById(id).get();
+    coffee.setId(oldCoffee.getId());
+    coffee.setCreateTime(oldCoffee.getCreateTime());
+    coffeeRep.save(coffee);
+    return coffee;
   }
 
   @ApiOperation("通过id删除单个咖啡商品信息")
@@ -153,7 +156,9 @@ public class CoffeeController {
     }
   )
   @DeleteMapping("/{id}")
-  public Coffee delectCoffee(@PathVariable String id) {
+  public Coffee delectCoffee(
+    @NotBlank(message = "id不能为空") @PathVariable String id
+  ) {
     // 如果没找到的话 则返回404状态码
     if (!coffeeRep.existsById(id)) throw new ResponseStatusException(
       HttpStatus.NOT_FOUND
