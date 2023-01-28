@@ -3,8 +3,6 @@ package com.example.learn_springboot.controllers;
 import com.example.learn_springboot.entitys.Coffee;
 import com.example.learn_springboot.repositorys.CoffeeRep;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
