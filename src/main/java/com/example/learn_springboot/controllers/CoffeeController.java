@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -52,10 +53,9 @@ public class CoffeeController {
   private CoffeeRep coffeeRep;
 
   // 使用URL例子 : http://localhost:2546/coffees/
-  // TODO 分页查询
-  // TODO 排序查询
+  // TODO 自定义排序查询
 
-  @ApiOperation("获取全部咖啡商品信息列表")
+  @ApiOperation("根据页数获取咖啡商品信息列表")
   @ApiResponses(
     {
       @ApiResponse(code = 200, message = "获取成功"),
@@ -63,9 +63,25 @@ public class CoffeeController {
     }
   )
   @GetMapping
-  public List<Coffee> getCoffees() {
+  public List<Coffee> getCoffees(
+    @RequestParam(value = "startPage", defaultValue = "1") @ApiParam(
+      "从哪页开始获取咖啡数据,每页10条数据,默认从第1页开始获取"
+    ) int startPage
+  ) {
+    // 起始页减一，符合后续逻辑操作
+    startPage--;
+    // 每页数据上限为10条
+    int pageSize = 10;
     log.info("开始执行getCoffees~"); // 测试日志是否有效
-    List<Coffee> coffeeList = coffeeRep.findAll();
+
+    double pageCount = Math.ceil(coffeeRep.count() / pageSize);
+
+    // 如果查询页数不存在或小于0则返回404
+    if (
+      startPage < 0 || startPage > pageCount
+    ) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+    List<Coffee> coffeeList = coffeeRep.getCoffees(startPage * pageSize, pageSize);
 
     // 如果全部咖啡信息列表里没有一个信息的话则返回404
     if (coffeeList.size() <= 0) throw new ResponseStatusException(
@@ -112,7 +128,6 @@ public class CoffeeController {
   )
   @PostMapping
   public Coffee addCoffee(
-    // TODO 待补充对象api字段说明
     @Validated @RequestBody @ApiParam("要添加的商品信息") Coffee coffee
   ) {
     Coffee newCoffee = coffee;
@@ -120,7 +135,7 @@ public class CoffeeController {
     newCoffee.setId(UUID.randomUUID().toString());
     // 生成13位时间戳 (13位时间戳是精确到毫秒)
     // 如果想生成10位时间戳的话 (10位时间戳是精确到秒) 在13位基础上除以1000即可
-    newCoffee.setCreateTime(new Date().getTime() / 1000);
+    newCoffee.setCreateTime(new Date().getTime());
     coffeeRep.save(newCoffee);
     return newCoffee;
   }
