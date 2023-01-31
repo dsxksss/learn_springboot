@@ -35,7 +35,7 @@ import org.springframework.web.server.ResponseStatusException;
  */
 
 //这是slf4j的接口，由于我们引入了logback-classic依赖，所以底层实现是logback
-// private static final Logger LOGGER = LoggerFactory.getLogger(Test.class);
+// private static final Logger log = LoggerFactory.getLogger(Test.class);
 // 使用lombok自带的Slf4j注解 可以实现和上方代码相同的事情
 // 只不过调用日志对象要使用log.xxx 来使用
 @Slf4j
@@ -64,7 +64,6 @@ public class CoffeeController {
   )
   @GetMapping
   public List<Coffee> getCoffees() {
-    // FIXME: 中文输出至日志后有乱码问题
     log.info("开始执行getCoffees~"); // 测试日志是否有效
     List<Coffee> coffeeList = coffeeRep.findAll();
 

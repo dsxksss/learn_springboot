@@ -27,7 +27,7 @@
             <!-- 这里使用预设的file格式 -->
             <pattern>${FILE_LOG_PATTERN}</pattern>
             <!-- 保存的file字符编码设置 -->
-            <charset>${FILE_LOG_CHARSET}</charset>
+            <charset>UTF-8</charset>
         </encoder>
         <!-- 自定义滚动策略 防止日志文件不清理 无限变大 -->
         <!-- 让日志文件写到一定数量就创建一个新的日志文件开始写 -->
