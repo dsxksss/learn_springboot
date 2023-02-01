@@ -40,8 +40,6 @@ import org.hibernate.validator.constraints.Length;
       * @Range(min=,max=,message=) 被注释的元素必须在合适的范围内
  */
 
-// TODO 待补充数据验证格式
-
 @Data // 包含属性的SetGet方法
 @AllArgsConstructor // 生成有参构造方法
 @NoArgsConstructor // 生成无参构造方法
@@ -66,9 +64,9 @@ public class Coffee {
 
   @Column(name = "price")
   @ApiModelProperty("咖啡价格")
+  @NotNull(message = "咖啡价格不能为空")
   @Min(value = 0, message = "咖啡价格不能低于0")
   @Max(value = 100000, message = "咖啡价格不能大于100000")
-  @NotNull(message = "咖啡价格不能为空")
   private double price;
   
   @Column(name = "quantity")
