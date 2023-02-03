@@ -7,13 +7,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.Resource;
+import javax.validation.constraints.NotBlank;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -33,8 +35,8 @@ import org.springframework.web.server.ResponseStatusException;
  *购买某款咖啡：POST /coffees/{id}/purchase
  */
 
- //这是slf4j的接口，由于我们引入了logback-classic依赖，所以底层实现是logback
-// private static final Logger LOGGER = LoggerFactory.getLogger(Test.class);
+//这是slf4j的接口，由于我们引入了logback-classic依赖，所以底层实现是logback
+// private static final Logger log = LoggerFactory.getLogger(Test.class);
 // 使用lombok自带的Slf4j注解 可以实现和上方代码相同的事情
 // 只不过调用日志对象要使用log.xxx 来使用
 @Slf4j
@@ -44,7 +46,6 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/coffees")
 public class CoffeeController {
 
-  // TODO 验证客户端数据是否有效且格式有效
   // TODO 实现权限访问
   // TODO redis缓存层
 
@@ -52,10 +53,9 @@ public class CoffeeController {
   private CoffeeRep coffeeRep;
 
   // 使用URL例子 : http://localhost:2546/coffees/
-  // TODO 分页查询
-  // TODO 排序查询
+  // TODO 自定义排序查询
 
-  @ApiOperation("获取全部咖啡商品信息列表")
+  @ApiOperation("根据页数获取咖啡商品信息列表")
   @ApiResponses(
     {
       @ApiResponse(code = 200, message = "获取成功"),
@@ -63,9 +63,25 @@ public class CoffeeController {
     }
   )
   @GetMapping
-  public List<Coffee> getCoffees() {
+  public List<Coffee> getCoffees(
+    @RequestParam(value = "startPage", defaultValue = "1") @ApiParam(
+      "从哪页开始获取咖啡数据,每页10条数据,默认从第1页开始获取"
+    ) int startPage
+  ) {
+    // 起始页减一，符合后续逻辑操作
+    startPage--;
+    // 每页数据上限为10条
+    int pageSize = 10;
     log.info("开始执行getCoffees~"); // 测试日志是否有效
-    List<Coffee> coffeeList = coffeeRep.findAll();
+
+    double pageCount = Math.ceil(coffeeRep.count() / pageSize);
+
+    // 如果查询页数不存在或小于0则返回404
+    if (
+      startPage < 0 || startPage > pageCount
+    ) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+    List<Coffee> coffeeList = coffeeRep.getCoffees(startPage * pageSize, pageSize);
 
     // 如果全部咖啡信息列表里没有一个信息的话则返回404
     if (coffeeList.size() <= 0) throw new ResponseStatusException(
@@ -88,9 +104,11 @@ public class CoffeeController {
   )
   @GetMapping("/{id}")
   // @PathVariable 会去搜索path上是否有被{}包裹起来的同名的id值
-  //! 并且表示该值作用于下方的参数中 , 需注意同名
+  // ! 并且表示该值作用于下方的参数中 , 需注意同名
   public Coffee getCoffee(
-    @PathVariable @ApiParam("要获取某个咖啡商品信息的id") String id
+    @NotBlank(message = "id不能为空") @PathVariable @ApiParam(
+      "咖啡id"
+    ) String id
   ) {
     // 如果没找到的话 则返回404状态码
     if (!coffeeRep.existsById(id)) throw new ResponseStatusException(
@@ -109,13 +127,15 @@ public class CoffeeController {
     }
   )
   @PostMapping
-  public Coffee addCoffee(@RequestBody Coffee coffee) {
+  public Coffee addCoffee(
+    @Validated @RequestBody @ApiParam("要添加的商品信息") Coffee coffee
+  ) {
     Coffee newCoffee = coffee;
     // 生成ID
     newCoffee.setId(UUID.randomUUID().toString());
     // 生成13位时间戳 (13位时间戳是精确到毫秒)
     // 如果想生成10位时间戳的话 (10位时间戳是精确到秒) 在13位基础上除以1000即可
-    newCoffee.setCreateTime(new Date().getTime() / 1000);
+    newCoffee.setCreateTime(new Date().getTime());
     coffeeRep.save(newCoffee);
     return newCoffee;
   }
@@ -129,19 +149,22 @@ public class CoffeeController {
   )
   @PutMapping("/{id}")
   public Coffee updateCoffee(
-    @PathVariable String id,
-    @RequestBody Coffee reqCoffee
+    @NotBlank(message = "id不能为空") @PathVariable @ApiParam(
+      "咖啡id"
+    ) String id,
+    @Validated @RequestBody Coffee reqCoffee
   ) {
     // 如果没找到的话 则返回404状态码
     if (!coffeeRep.existsById(id)) throw new ResponseStatusException(
       HttpStatus.NOT_FOUND
     );
-    Coffee oldCoffee = reqCoffee;
-    Coffee newCoffee = coffeeRep.findById(id).get();
-    oldCoffee.setId(newCoffee.getId());
-    oldCoffee.setCreateTime(newCoffee.getCreateTime());
-    coffeeRep.save(reqCoffee);
-    return newCoffee;
+
+    Coffee coffee = reqCoffee;
+    Coffee oldCoffee = coffeeRep.findById(id).get();
+    coffee.setId(oldCoffee.getId());
+    coffee.setCreateTime(oldCoffee.getCreateTime());
+    coffeeRep.save(coffee);
+    return coffee;
   }
 
   @ApiOperation("通过id删除单个咖啡商品信息")
@@ -152,7 +175,11 @@ public class CoffeeController {
     }
   )
   @DeleteMapping("/{id}")
-  public Coffee delectCoffee(@PathVariable String id) {
+  public Coffee delectCoffee(
+    @NotBlank(message = "id不能为空") @PathVariable @ApiParam(
+      "咖啡id"
+    ) String id
+  ) {
     // 如果没找到的话 则返回404状态码
     if (!coffeeRep.existsById(id)) throw new ResponseStatusException(
       HttpStatus.NOT_FOUND
