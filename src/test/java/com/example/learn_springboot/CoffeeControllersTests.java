@@ -1,16 +1,17 @@
 package com.example.learn_springboot;
 
+import com.alibaba.fastjson.JSON;
 import javax.annotation.Resource;
 import org.json.JSONObject;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -32,8 +33,7 @@ public class CoffeeControllersTests {
 
   @Test
   @Order(1)
-  @DisplayName("测试添加咖啡数据")
-  void testGetCoffees() throws Exception {
+  void testAddCoffees() throws Exception {
     JSONObject testData = new JSONObject();
     testData.put("name", "拿铁咖啡");
     testData.put("price", 15.00);
@@ -63,7 +63,52 @@ public class CoffeeControllersTests {
         MockMvcResultMatchers
           .jsonPath("description")
           .value("拿铁咖啡以热牛奶和浓缩咖啡调制而成，口感香浓，醇厚")
+      );
+  }
+
+  @Test
+  @Order(2)
+  void testGetCoffees() throws Exception {
+    // getCoffee
+    MvcResult result = mockMvc
+      .perform(MockMvcRequestBuilders.get("/coffees").param("startPage", "1"))
+      .andExpect(MockMvcResultMatchers.status().isOk())
+      .andExpect(
+        MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
+      )
+      .andExpectAll(
+        MockMvcResultMatchers.jsonPath("$[0].name").value("拿铁咖啡"),
+        MockMvcResultMatchers.jsonPath("$[0].price").value(15.00),
+        MockMvcResultMatchers.jsonPath("$[0].quantity").value(15),
+        MockMvcResultMatchers.jsonPath("$[0].image").value("拿铁咖啡.jpg"),
+        MockMvcResultMatchers
+          .jsonPath("$[0].description")
+          .value("拿铁咖啡以热牛奶和浓缩咖啡调制而成，口感香浓，醇厚")
       )
       .andReturn();
+
+    com.alibaba.fastjson.JSONArray dataArray = JSON.parseArray(
+      result.getResponse().getContentAsString()
+    );
+    com.alibaba.fastjson.JSONObject dataObject = dataArray.getJSONObject(0);
+
+    // getCoffee
+    mockMvc
+      .perform(
+        MockMvcRequestBuilders.get("/coffees/" + dataObject.getString("id"))
+      )
+      .andExpect(MockMvcResultMatchers.status().isOk())
+      .andExpect(
+        MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
+      )
+      .andExpectAll(
+        MockMvcResultMatchers.jsonPath("$.name").value("拿铁咖啡"),
+        MockMvcResultMatchers.jsonPath("$.price").value(15.00),
+        MockMvcResultMatchers.jsonPath("$.quantity").value(15),
+        MockMvcResultMatchers.jsonPath("$.image").value("拿铁咖啡.jpg"),
+        MockMvcResultMatchers
+          .jsonPath("$.description")
+          .value("拿铁咖啡以热牛奶和浓缩咖啡调制而成，口感香浓，醇厚")
+      );
   }
 }
