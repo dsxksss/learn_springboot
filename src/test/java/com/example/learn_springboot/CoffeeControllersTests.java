@@ -29,7 +29,9 @@ public class CoffeeControllersTests {
   @Resource
   private MockMvc mockMvc;
 
-  // TODO 待补充其他测试
+  private static String TESTID = null;
+
+  // TODO 待测试各详细项
 
   @Test
   @Order(1)
@@ -91,12 +93,12 @@ public class CoffeeControllersTests {
       result.getResponse().getContentAsString()
     );
     com.alibaba.fastjson.JSONObject dataObject = dataArray.getJSONObject(0);
+    // 提供测试id方便后续测试
+    TESTID = dataObject.getString("id");
 
     // getCoffee
     mockMvc
-      .perform(
-        MockMvcRequestBuilders.get("/coffees/" + dataObject.getString("id"))
-      )
+      .perform(MockMvcRequestBuilders.get("/coffees/" + TESTID))
       .andExpect(MockMvcResultMatchers.status().isOk())
       .andExpect(
         MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
@@ -110,5 +112,44 @@ public class CoffeeControllersTests {
           .jsonPath("$.description")
           .value("拿铁咖啡以热牛奶和浓缩咖啡调制而成，口感香浓，醇厚")
       );
+  }
+
+  @Test
+  @Order(3)
+  void testUpdateCoffee() throws Exception {
+    JSONObject testData = new JSONObject();
+    testData.put("name", "test");
+    testData.put("price", 15.00);
+    testData.put("quantity", 15);
+    testData.put("image", "拿铁咖啡.jpg");
+    testData.put(
+      "description",
+      "拿铁咖啡以热牛奶和浓缩咖啡调制而成，口感香浓，醇厚"
+    );
+
+    mockMvc
+      .perform(
+        MockMvcRequestBuilders
+          .put("/coffees/" + TESTID)
+          .content(testData.toString())
+          .contentType(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(MockMvcResultMatchers.status().isOk())
+      .andExpect(
+        MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
+      )
+      .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("test"));
+  }
+
+  @Test
+  @Order(4)
+  void testDeleteCoffee() throws Exception {
+    mockMvc
+      .perform(MockMvcRequestBuilders.delete("/coffees/" + TESTID))
+      .andExpect(MockMvcResultMatchers.status().isOk());
+
+    mockMvc
+      .perform(MockMvcRequestBuilders.get("/coffees/" + TESTID))
+      .andExpect(MockMvcResultMatchers.status().isNotFound());
   }
 }
