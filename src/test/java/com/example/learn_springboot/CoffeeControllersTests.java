@@ -37,6 +37,10 @@ public class CoffeeControllersTests {
   @Test
   @Order(1)
   void testAddCoffees() throws Exception {
+    // 先确认空内容是否可以被获取
+    mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL))
+    .andExpect(MockMvcResultMatchers.status().isNotFound());
+
     JSONObject testData1 = new JSONObject();
     testData1.put("name", "拿铁咖啡");
     testData1.put("price", 15.00);
