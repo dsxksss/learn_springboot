@@ -81,7 +81,10 @@ public class CoffeeController {
       startPage < 0 || startPage > pageCount
     ) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
-    List<Coffee> coffeeList = coffeeRep.getCoffees(startPage * pageSize, pageSize);
+    List<Coffee> coffeeList = coffeeRep.getCoffees(
+      startPage * pageSize,
+      pageSize
+    );
 
     // 如果全部咖啡信息列表里没有一个信息的话则返回404
     if (coffeeList.size() <= 0) throw new ResponseStatusException(
@@ -138,6 +141,12 @@ public class CoffeeController {
     newCoffee.setCreateTime(new Date().getTime());
     coffeeRep.save(newCoffee);
     return newCoffee;
+  }
+
+  @ApiOperation("购买咖啡")
+  @PostMapping("/{id}/purchase")
+  public void purchaseCoffee(){
+    // TODO 待实现购买咖啡功能
   }
 
   @ApiOperation("通过id修改单个咖啡商品信息")
