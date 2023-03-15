@@ -10,7 +10,6 @@ import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,19 +26,14 @@ import org.springframework.web.bind.annotation.RestController;
  *获取所有咖啡信息：GET /coffees
  *获取某款咖啡信息：GET /coffees/{id}
  *新增一款咖啡：POST /coffees
- *修改某款咖啡信息：PUT /coffees/{id}
+ *修改某款咖啡信息：PUT /coffees
  *删除某款咖啡：DELETE /coffees/{id}
  *购买某款咖啡：POST /coffees/{id}/purchase
  */
 
-//这是slf4j的接口，由于我们引入了logback-classic依赖，所以底层实现是logback
-// private static final Logger log = LoggerFactory.getLogger(Test.class);
-// 使用lombok自带的Slf4j注解 可以实现和上方代码相同的事情
-// 只不过调用日志对象要使用log.xxx 来使用
 @Slf4j
 @Api(tags = "咖啡商品api")
 @RestController
-// 路由根路径
 @RequestMapping("/coffees")
 public class CoffeeController {
 
@@ -47,8 +41,7 @@ public class CoffeeController {
   private CoffeeService coffeeService;
 
   // TODO 实现权限访问
-  // 使用URL例子 : http://localhost:2546/coffees/
-  
+
   @ApiOperation("根据页数获取咖啡商品信息列表")
   @ApiResponses(
     {
@@ -66,10 +59,6 @@ public class CoffeeController {
     return coffeeService.getCoffees(startPage);
   }
 
-  // 当URL指向的是某一具体业务资源（或者资源列表），例如博客，用户时，使用@PathVariable
-  // 当URL需要对资源或者资源列表进行过滤，筛选时，用@RequestParam
-  // 使用URL例子 : http://localhost:2546/coffees/1
-
   @ApiOperation("通过id获取单个咖啡商品信息")
   @ApiResponses(
     {
@@ -78,8 +67,6 @@ public class CoffeeController {
     }
   )
   @GetMapping("/{id}")
-  // @PathVariable 会去搜索path上是否有被{}包裹起来的同名的id值
-  // ! 并且表示该值作用于下方的参数中 , 需注意同名
   public Coffee getCoffee(
     @NotBlank(message = "id不能为空") @PathVariable @ApiParam(
       "咖啡id"
