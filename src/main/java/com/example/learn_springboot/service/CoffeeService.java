@@ -113,6 +113,11 @@ public class CoffeeService {
     return newCoffee;
   }
 
+  /**
+   * 删除咖啡数据
+   * @param deleteID
+   * @return
+   */
   public Coffee deleteCoffee(String deleteID) {
     // 如果没找到的话 则返回404状态码
     if (!coffeeRep.existsById(deleteID)) throw new ResponseStatusException(
