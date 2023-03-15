@@ -33,13 +33,13 @@ public class CoffeeControllersTests {
   private static String TEST_ID = null;
   private static String BASE_URL = "/coffees";
 
-
   @Test
   @Order(1)
   void testAddCoffees() throws Exception {
     // 先确认空内容是否可以被获取
-    mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL))
-    .andExpect(MockMvcResultMatchers.status().isNotFound());
+    mockMvc
+      .perform(MockMvcRequestBuilders.get(BASE_URL))
+      .andExpect(MockMvcResultMatchers.status().isNotFound());
 
     JSONObject testData1 = new JSONObject();
     testData1.put("name", "拿铁咖啡");
@@ -115,7 +115,7 @@ public class CoffeeControllersTests {
 
     // getCoffee
     mockMvc
-      .perform(MockMvcRequestBuilders.get("/coffees/" + TEST_ID))
+      .perform(MockMvcRequestBuilders.get(BASE_URL + "/" + TEST_ID))
       .andExpect(MockMvcResultMatchers.status().isOk())
       .andExpect(
         MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
@@ -132,7 +132,7 @@ public class CoffeeControllersTests {
 
     // 测试非法id的操作是否符合预期
     mockMvc
-      .perform(MockMvcRequestBuilders.get("/coffees/" + UUID.randomUUID()))
+      .perform(MockMvcRequestBuilders.get(BASE_URL + "/" + UUID.randomUUID()))
       .andExpect(MockMvcResultMatchers.status().isNotFound());
 
     // 测试获取超过已有页数的报错是否符合预期
@@ -145,19 +145,17 @@ public class CoffeeControllersTests {
   @Order(3)
   void testUpdateCoffee() throws Exception {
     JSONObject testData = new JSONObject();
+    testData.put("id", TEST_ID);
     testData.put("name", "test");
     testData.put("price", 15.00);
     testData.put("quantity", 15);
     testData.put("image", "拿铁咖啡.jpg");
-    testData.put(
-      "description",
-      "拿铁咖啡以热牛奶和浓缩咖啡调制而成，口感香浓，醇厚"
-    );
+    testData.put("description", "热牛奶和浓缩咖啡调制而成");
 
     mockMvc
       .perform(
         MockMvcRequestBuilders
-          .put("/coffees/" + TEST_ID)
+          .put(BASE_URL)
           .content(testData.toString())
           .contentType(MediaType.APPLICATION_JSON)
       )
@@ -168,10 +166,11 @@ public class CoffeeControllersTests {
       .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("test"));
 
     // 测试非法id的操作是否符合预期
+    testData.put("id", UUID.randomUUID());
     mockMvc
       .perform(
         MockMvcRequestBuilders
-          .put("/coffees/" + UUID.randomUUID())
+          .put(BASE_URL)
           .content(testData.toString())
           .contentType(MediaType.APPLICATION_JSON)
       )
@@ -182,16 +181,18 @@ public class CoffeeControllersTests {
   @Order(4)
   void testDeleteCoffee() throws Exception {
     mockMvc
-      .perform(MockMvcRequestBuilders.delete("/coffees/" + TEST_ID))
+      .perform(MockMvcRequestBuilders.delete(BASE_URL + "/" + TEST_ID))
       .andExpect(MockMvcResultMatchers.status().isOk());
 
     mockMvc
-      .perform(MockMvcRequestBuilders.get("/coffees/" + TEST_ID))
+      .perform(MockMvcRequestBuilders.get(BASE_URL + "/" + TEST_ID))
       .andExpect(MockMvcResultMatchers.status().isNotFound());
 
     // 测试非法id的操作是否符合预期
     mockMvc
-      .perform(MockMvcRequestBuilders.delete("/coffees/" + UUID.randomUUID()))
+      .perform(
+        MockMvcRequestBuilders.delete(BASE_URL + "/" + UUID.randomUUID())
+      )
       .andExpect(MockMvcResultMatchers.status().isNotFound());
   }
 }

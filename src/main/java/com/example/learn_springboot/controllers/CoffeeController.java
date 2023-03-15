@@ -1,19 +1,17 @@
 package com.example.learn_springboot.controllers;
 
 import com.example.learn_springboot.entitys.Coffee;
-import com.example.learn_springboot.repositorys.CoffeeRep;
+import com.example.learn_springboot.service.CoffeeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
-import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 /* RESTful API的方式来设计的URL请求
  *获取所有咖啡信息：GET /coffees
@@ -46,15 +43,12 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/coffees")
 public class CoffeeController {
 
+  @Autowired
+  private CoffeeService coffeeService;
+
   // TODO 实现权限访问
-  // TODO redis缓存层
-
-  @Resource
-  private CoffeeRep coffeeRep;
-
   // 使用URL例子 : http://localhost:2546/coffees/
-  // TODO 自定义排序查询
-
+  
   @ApiOperation("根据页数获取咖啡商品信息列表")
   @ApiResponses(
     {
@@ -68,36 +62,14 @@ public class CoffeeController {
       "从哪页开始获取咖啡数据,每页10条数据,默认从第1页开始获取"
     ) int startPage
   ) {
-    // 起始页减一，符合后续逻辑操作
-    startPage--;
-    // 每页数据上限为10条
-    int pageSize = 10;
     log.info("开始执行getCoffees~"); // 测试日志是否有效
-
-    double pageCount = Math.ceil(coffeeRep.count() / pageSize);
-
-    // 如果查询页数不存在或小于0则返回404
-    if (
-      startPage < 0 || startPage > pageCount
-    ) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-    List<Coffee> coffeeList = coffeeRep.getCoffees(
-      startPage * pageSize,
-      pageSize
-    );
-
-    // 如果全部咖啡信息列表里没有一个信息的话则返回404
-    if (coffeeList.size() <= 0) throw new ResponseStatusException(
-      HttpStatus.NOT_FOUND
-    );
-
-    return coffeeList;
+    return coffeeService.getCoffees(startPage);
   }
 
   // 当URL指向的是某一具体业务资源（或者资源列表），例如博客，用户时，使用@PathVariable
   // 当URL需要对资源或者资源列表进行过滤，筛选时，用@RequestParam
-
   // 使用URL例子 : http://localhost:2546/coffees/1
+
   @ApiOperation("通过id获取单个咖啡商品信息")
   @ApiResponses(
     {
@@ -113,13 +85,7 @@ public class CoffeeController {
       "咖啡id"
     ) String id
   ) {
-    // 如果没找到的话 则返回404状态码
-    if (!coffeeRep.existsById(id)) throw new ResponseStatusException(
-      HttpStatus.NOT_FOUND
-    );
-    // 找到则返回
-    Coffee coffee = coffeeRep.findById(id).get();
-    return coffee;
+    return coffeeService.getCoffee(id);
   }
 
   @ApiOperation("添加咖啡商品信息")
@@ -133,19 +99,12 @@ public class CoffeeController {
   public Coffee addCoffee(
     @Validated @RequestBody @ApiParam("要添加的商品信息") Coffee coffee
   ) {
-    Coffee newCoffee = coffee;
-    // 生成ID
-    newCoffee.setId(UUID.randomUUID().toString());
-    // 生成13位时间戳 (13位时间戳是精确到毫秒)
-    // 如果想生成10位时间戳的话 (10位时间戳是精确到秒) 在13位基础上除以1000即可
-    newCoffee.setCreateTime(new Date().getTime());
-    coffeeRep.save(newCoffee);
-    return newCoffee;
+    return coffeeService.addCoffee(coffee);
   }
 
   @ApiOperation("购买咖啡")
   @PostMapping("/{id}/purchase")
-  public void purchaseCoffee(){
+  public void purchaseCoffee() {
     // TODO 待实现购买咖啡功能
   }
 
@@ -156,24 +115,9 @@ public class CoffeeController {
       @ApiResponse(code = 404, message = "没找到包含了该id的咖啡信息"),
     }
   )
-  @PutMapping("/{id}")
-  public Coffee updateCoffee(
-    @NotBlank(message = "id不能为空") @PathVariable @ApiParam(
-      "咖啡id"
-    ) String id,
-    @Validated @RequestBody Coffee reqCoffee
-  ) {
-    // 如果没找到的话 则返回404状态码
-    if (!coffeeRep.existsById(id)) throw new ResponseStatusException(
-      HttpStatus.NOT_FOUND
-    );
-
-    Coffee coffee = reqCoffee;
-    Coffee oldCoffee = coffeeRep.findById(id).get();
-    coffee.setId(oldCoffee.getId());
-    coffee.setCreateTime(oldCoffee.getCreateTime());
-    coffeeRep.save(coffee);
-    return coffee;
+  @PutMapping
+  public Coffee updateCoffee(@Validated @RequestBody Coffee reqCoffee) {
+    return coffeeService.updateCoffee(reqCoffee);
   }
 
   @ApiOperation("通过id删除单个咖啡商品信息")
@@ -189,12 +133,6 @@ public class CoffeeController {
       "咖啡id"
     ) String id
   ) {
-    // 如果没找到的话 则返回404状态码
-    if (!coffeeRep.existsById(id)) throw new ResponseStatusException(
-      HttpStatus.NOT_FOUND
-    );
-    Coffee deletCoffee = coffeeRep.findById(id).get();
-    coffeeRep.deleteById(id);
-    return deletCoffee;
+    return coffeeService.deleteCoffee(id);
   }
 }
