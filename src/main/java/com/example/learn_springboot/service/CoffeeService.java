@@ -2,7 +2,6 @@ package com.example.learn_springboot.service;
 
 import com.example.learn_springboot.entitys.Coffee;
 import com.example.learn_springboot.repositorys.CoffeeRep;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class CoffeeService {
    * @return
    */
   public List<Coffee> getCoffees(int startPage) {
-    // 起始页减一，符合后续逻辑操作
+    // 起始页减一，符合后续计算逻辑
     startPage--;
 
     // 每页数据上限为10条
@@ -58,13 +57,10 @@ public class CoffeeService {
    * @return
    */
   public Coffee getCoffee(String coffeeID) {
-    // 如果没找到的话 则返回404状态码
-    if (!coffeeRep.existsById(coffeeID)) throw new ResponseStatusException(
-      HttpStatus.NOT_FOUND
-    );
-
-    // 找到则返回
-    return coffeeRep.findById(coffeeID).get();
+    // 如果没找到的话，则返回 404 状态码
+    return coffeeRep
+      .findById(coffeeID)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
 
   /**
@@ -73,19 +69,18 @@ public class CoffeeService {
    * @return
    */
   public Coffee addCoffee(Coffee coffee) {
-    // 创建数据副本
-    Coffee newCoffee = coffee;
-
     // 生成ID
-    newCoffee.setId(UUID.randomUUID().toString());
+    String id = UUID.randomUUID().toString();
+    coffee.setId(id);
 
     // 生成13位时间戳 (13位时间戳是精确到毫秒)
     // 如果想生成10位时间戳的话 (10位时间戳是精确到秒) 在13位基础上除以1000即可
-    newCoffee.setCreateTime(new Date().getTime());
+    long createTime = System.currentTimeMillis();
+    coffee.setCreateTime(createTime);
 
     // 保存加工后的数据至数据库
-    coffeeRep.save(newCoffee);
-    return newCoffee;
+    coffeeRep.save(coffee);
+    return coffee;
   }
 
   /**
@@ -94,21 +89,18 @@ public class CoffeeService {
    * @return
    */
   public Coffee updateCoffee(Coffee coffee) {
-    // 创建数据副本
-    Coffee newCoffee = coffee;
-
     // 查找是否存在该信息,如果不存在则返回404状态码
-    if (
-      !coffeeRep.existsById(newCoffee.getId())
-    ) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    if (!coffeeRep.existsById(coffee.getId())) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
 
-    // 获取该ID对应的旧数据
-    Coffee oldCoffee = coffeeRep.findById(newCoffee.getId()).get();
-
-    // 将老数据中的创建时间同步，并且保存新咖啡字段至数据库
-    newCoffee.setId(oldCoffee.getId());
-    newCoffee.setCreateTime(oldCoffee.getCreateTime());
-    coffeeRep.save(newCoffee);
+    // 获取该ID对应的旧数据并更新字段
+    Coffee newCoffee = coffeeRep.findById(coffee.getId()).orElse(null);
+    if (newCoffee != null) {
+      newCoffee.setName(coffee.getName());
+      newCoffee.setPrice(coffee.getPrice());
+      coffeeRep.save(newCoffee);
+    }
 
     return newCoffee;
   }
@@ -119,17 +111,14 @@ public class CoffeeService {
    * @return
    */
   public Coffee deleteCoffee(String deleteID) {
-    // 如果没找到的话 则返回404状态码
-    if (!coffeeRep.existsById(deleteID)) throw new ResponseStatusException(
-      HttpStatus.NOT_FOUND
-    );
-
-    // 获取即将删除的咖啡数据用于返回给客户端
-    Coffee deletCoffee = coffeeRep.findById(deleteID).get();
+    // 判断是否存在该咖啡数据，如果不存在，则抛出 404 异常
+    Coffee coffeeToDelete = coffeeRep
+      .findById(deleteID)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     // 删除数据库内对应的咖啡数据
-    coffeeRep.deleteById(deleteID);
+    coffeeRep.delete(coffeeToDelete);
 
-    return deletCoffee;
+    return coffeeToDelete;
   }
 }
