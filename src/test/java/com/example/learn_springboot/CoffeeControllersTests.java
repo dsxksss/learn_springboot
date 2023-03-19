@@ -35,7 +35,7 @@ public class CoffeeControllersTests {
 
   @Test
   @Order(1)
-  void testAddCoffees() throws Exception {
+  void testAddCoffee() throws Exception {
     // 先确认空内容是否可以被获取
     mockMvc
       .perform(MockMvcRequestBuilders.get(BASE_URL))
