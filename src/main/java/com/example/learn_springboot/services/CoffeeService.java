@@ -1,6 +1,7 @@
 package com.example.learn_springboot.services;
 
 import com.example.learn_springboot.entitys.Coffee;
+import com.example.learn_springboot.manager.RedisCacheManager;
 import com.example.learn_springboot.repositorys.CoffeeRep;
 import java.util.List;
 import java.util.UUID;
@@ -9,18 +10,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-// TODO redis缓存层
+// TODO 设置随机缓存过期时间以避免缓存雪崩问题
 @Service
 public class CoffeeService {
 
   @Autowired
   private CoffeeRep coffeeRep;
 
-  
+  @Autowired
+  private RedisCacheManager coffeeCacheManager;
+
+  private static final String CACHE_TABLE_NAME = "coffee:";
 
   /**
    * 获取多个咖啡信息
-   *  TODO 自定义排序查询
+   *
+   * TODO 自定义排序查询
+   * TODO 添加多个咖啡信息缓存层
    * @param startPage
    * @return
    */
@@ -55,18 +61,29 @@ public class CoffeeService {
 
   /**
    * 获取单个咖啡信息
-   * @param coffeeID
+   *
+   * @param id
    * @return
    */
-  public Coffee getCoffee(String coffeeID) {
+  public Coffee getCoffee(String id) {
+    Coffee coffee = (Coffee) coffeeCacheManager.getFromCache(
+      CACHE_TABLE_NAME + id
+    );
+
+    if (coffee == null) {
+      coffeeRep
+        .findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+      coffeeCacheManager.addToCache(CACHE_TABLE_NAME + id, coffee, 86400);
+    }
+
     // 如果没找到的话，则返回 404 状态码
-    return coffeeRep
-      .findById(coffeeID)
-      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    return coffee;
   }
 
   /**
    * 添加单个咖啡信息
+   *
    * @param coffee
    * @return
    */
@@ -80,13 +97,16 @@ public class CoffeeService {
     long createTime = System.currentTimeMillis();
     coffee.setCreateTime(createTime);
 
-    // 保存加工后的数据至数据库
+    // 保存加工后的数据至数据库以及redis缓存
     coffeeRep.save(coffee);
+    // 无误后记得添加至缓存中并且设置过期时间为一天
+    coffeeCacheManager.addToCache(CACHE_TABLE_NAME + id, coffee, 86400);
     return coffee;
   }
 
   /**
    * 更新咖啡字段
+   *
    * @param coffee
    * @return
    */
@@ -101,7 +121,15 @@ public class CoffeeService {
     if (newCoffee != null) {
       newCoffee.setName(coffee.getName());
       newCoffee.setPrice(coffee.getPrice());
+
       coffeeRep.save(newCoffee);
+
+      // 无误后记得添加至缓存中并且设置过期时间为一天
+      coffeeCacheManager.addToCache(
+        CACHE_TABLE_NAME + coffee.getId(),
+        newCoffee,
+        86400
+      );
     }
 
     return newCoffee;
@@ -109,6 +137,7 @@ public class CoffeeService {
 
   /**
    * 删除咖啡数据
+   *
    * @param deleteID
    * @return
    */
@@ -120,6 +149,9 @@ public class CoffeeService {
 
     // 删除数据库内对应的咖啡数据
     coffeeRep.delete(coffeeToDelete);
+
+    // 无误后记得别忘记了删除缓存
+    coffeeCacheManager.deleteFromCache(CACHE_TABLE_NAME + deleteID);
 
     return coffeeToDelete;
   }
