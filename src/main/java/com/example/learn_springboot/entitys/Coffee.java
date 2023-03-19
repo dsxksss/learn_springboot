@@ -2,6 +2,7 @@ package com.example.learn_springboot.entitys;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -47,7 +48,7 @@ import org.hibernate.validator.constraints.Length;
 @Entity // 表示我是一个实体类
 @Table(name = "coffees") // 对应生成的表名
 @ApiModel(description = "咖啡商品信息模型")
-public class Coffee {
+public class Coffee implements Serializable {
 
   // 表生成方式
   // @GeneratedValue(strategy = GenerationType.IDENTITY) // 按自增id生成
@@ -68,7 +69,7 @@ public class Coffee {
   @Min(value = 0, message = "咖啡价格不能低于0")
   @Max(value = 100000, message = "咖啡价格不能大于100000")
   private double price;
-  
+
   @Column(name = "quantity")
   @ApiModelProperty("售卖数量")
   @NotNull(message = "咖啡数量不能为空")
