@@ -1,4 +1,4 @@
-package com.example.learn_springboot.service;
+package com.example.learn_springboot.services;
 
 import com.example.learn_springboot.entitys.Coffee;
 import com.example.learn_springboot.repositorys.CoffeeRep;
@@ -15,6 +15,8 @@ public class CoffeeService {
 
   @Autowired
   private CoffeeRep coffeeRep;
+
+  
 
   /**
    * 获取多个咖啡信息

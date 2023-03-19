@@ -1,7 +1,8 @@
 package com.example.learn_springboot.controllers;
 
 import com.example.learn_springboot.entitys.Coffee;
-import com.example.learn_springboot.service.CoffeeService;
+import com.example.learn_springboot.services.CoffeeService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
