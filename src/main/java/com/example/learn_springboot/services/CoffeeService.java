@@ -4,13 +4,13 @@ import com.example.learn_springboot.entitys.Coffee;
 import com.example.learn_springboot.manager.RedisCacheManager;
 import com.example.learn_springboot.repositorys.CoffeeRep;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-// TODO 设置随机缓存过期时间以避免缓存雪崩问题
 @Service
 public class CoffeeService {
 
@@ -74,7 +74,11 @@ public class CoffeeService {
       coffeeRep
         .findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-      coffeeCacheManager.addToCache(CACHE_TABLE_NAME + id, coffee, 86400);
+      coffeeCacheManager.addToCache(
+        CACHE_TABLE_NAME + id,
+        coffee,
+        new Random().nextInt(604800 - 86400) + 86400
+      );
     }
 
     // 如果没找到的话，则返回 404 状态码
@@ -100,7 +104,11 @@ public class CoffeeService {
     // 保存加工后的数据至数据库以及redis缓存
     coffeeRep.save(coffee);
     // 无误后记得添加至缓存中并且设置过期时间为一天
-    coffeeCacheManager.addToCache(CACHE_TABLE_NAME + id, coffee, 86400);
+    coffeeCacheManager.addToCache(
+      CACHE_TABLE_NAME + id,
+      coffee,
+      new Random().nextInt(604800 - 86400) + 86400
+    );
     return coffee;
   }
 
@@ -128,7 +136,7 @@ public class CoffeeService {
       coffeeCacheManager.addToCache(
         CACHE_TABLE_NAME + coffee.getId(),
         newCoffee,
-        86400
+        new Random().nextInt(604800 - 86400) + 86400
       );
     }
 
