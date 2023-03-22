@@ -31,7 +31,15 @@ public class CoffeeControllersTests {
   private MockMvc mockMvc;
 
   private static String TEST_ID = null;
-  private static String BASE_URL = "/coffees";
+  private static final String BASE_URL = "/coffees";
+  private static final String NAME = "拿铁咖啡";
+  private static final double PRICE = 15.00;
+  private static final int QUANTITY = 15;
+  private static final String IMAGE = "拿铁咖啡.jpg";
+  private static final String DESCRIPTION =
+    "拿铁咖啡以热牛奶和浓缩咖啡调制而成，口感香浓，醇厚";
+  private static final String JSON_CONTENT_TYPE =
+    MediaType.APPLICATION_JSON_VALUE;
 
   @Test
   @Order(1)
@@ -41,46 +49,40 @@ public class CoffeeControllersTests {
       .perform(MockMvcRequestBuilders.get(BASE_URL))
       .andExpect(MockMvcResultMatchers.status().isNotFound());
 
+    // 构造测试数据
     JSONObject testData1 = new JSONObject();
-    testData1.put("name", "拿铁咖啡");
-    testData1.put("price", 15.00);
-    testData1.put("quantity", 15);
-    testData1.put("image", "拿铁咖啡.jpg");
-    testData1.put(
-      "description",
-      "拿铁咖啡以热牛奶和浓缩咖啡调制而成，口感香浓，醇厚"
-    );
+    testData1.put("name", NAME);
+    testData1.put("price", PRICE);
+    testData1.put("quantity", QUANTITY);
+    testData1.put("image", IMAGE);
+    testData1.put("description", DESCRIPTION);
 
     mockMvc
       .perform(
         MockMvcRequestBuilders
           .post(BASE_URL)
           .content(testData1.toString())
-          .contentType(MediaType.APPLICATION_JSON)
+          .contentType(JSON_CONTENT_TYPE)
       )
       .andExpect(MockMvcResultMatchers.status().isOk())
-      .andExpect(
-        MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
-      )
+      .andExpect(MockMvcResultMatchers.content().contentType(JSON_CONTENT_TYPE))
       .andExpectAll(
-        MockMvcResultMatchers.jsonPath("name").value("拿铁咖啡"),
-        MockMvcResultMatchers.jsonPath("price").value(15.00),
-        MockMvcResultMatchers.jsonPath("quantity").value(15),
-        MockMvcResultMatchers.jsonPath("image").value("拿铁咖啡.jpg"),
-        MockMvcResultMatchers
-          .jsonPath("description")
-          .value("拿铁咖啡以热牛奶和浓缩咖啡调制而成，口感香浓，醇厚")
+        MockMvcResultMatchers.jsonPath("name").value(NAME),
+        MockMvcResultMatchers.jsonPath("price").value(PRICE),
+        MockMvcResultMatchers.jsonPath("quantity").value(QUANTITY),
+        MockMvcResultMatchers.jsonPath("image").value(IMAGE),
+        MockMvcResultMatchers.jsonPath("description").value(DESCRIPTION)
       );
 
+    // 发送 POST 请求，传入空数据，验证返回结果是否符合预期
     JSONObject testData2 = new JSONObject();
 
-    // 测试传入空数据后是否符合预期
     mockMvc
       .perform(
         MockMvcRequestBuilders
           .post(BASE_URL)
           .content(testData2.toString())
-          .contentType(MediaType.APPLICATION_JSON)
+          .contentType(JSON_CONTENT_TYPE)
       )
       .andExpect(MockMvcResultMatchers.status().isBadRequest());
   }
@@ -92,17 +94,13 @@ public class CoffeeControllersTests {
     MvcResult result = mockMvc
       .perform(MockMvcRequestBuilders.get(BASE_URL).param("startPage", "1"))
       .andExpect(MockMvcResultMatchers.status().isOk())
-      .andExpect(
-        MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
-      )
+      .andExpect(MockMvcResultMatchers.content().contentType(JSON_CONTENT_TYPE))
       .andExpectAll(
-        MockMvcResultMatchers.jsonPath("$[0].name").value("拿铁咖啡"),
-        MockMvcResultMatchers.jsonPath("$[0].price").value(15.00),
-        MockMvcResultMatchers.jsonPath("$[0].quantity").value(15),
-        MockMvcResultMatchers.jsonPath("$[0].image").value("拿铁咖啡.jpg"),
-        MockMvcResultMatchers
-          .jsonPath("$[0].description")
-          .value("拿铁咖啡以热牛奶和浓缩咖啡调制而成，口感香浓，醇厚")
+        MockMvcResultMatchers.jsonPath("$[0].name").value(NAME),
+        MockMvcResultMatchers.jsonPath("$[0].price").value(PRICE),
+        MockMvcResultMatchers.jsonPath("$[0].quantity").value(QUANTITY),
+        MockMvcResultMatchers.jsonPath("$[0].image").value(IMAGE),
+        MockMvcResultMatchers.jsonPath("$[0].description").value(DESCRIPTION)
       )
       .andReturn();
 
@@ -117,17 +115,13 @@ public class CoffeeControllersTests {
     mockMvc
       .perform(MockMvcRequestBuilders.get(BASE_URL + "/" + TEST_ID))
       .andExpect(MockMvcResultMatchers.status().isOk())
-      .andExpect(
-        MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
-      )
+      .andExpect(MockMvcResultMatchers.content().contentType(JSON_CONTENT_TYPE))
       .andExpectAll(
-        MockMvcResultMatchers.jsonPath("$.name").value("拿铁咖啡"),
-        MockMvcResultMatchers.jsonPath("$.price").value(15.00),
-        MockMvcResultMatchers.jsonPath("$.quantity").value(15),
-        MockMvcResultMatchers.jsonPath("$.image").value("拿铁咖啡.jpg"),
-        MockMvcResultMatchers
-          .jsonPath("$.description")
-          .value("拿铁咖啡以热牛奶和浓缩咖啡调制而成，口感香浓，醇厚")
+        MockMvcResultMatchers.jsonPath("$.name").value(NAME),
+        MockMvcResultMatchers.jsonPath("$.price").value(PRICE),
+        MockMvcResultMatchers.jsonPath("$.quantity").value(QUANTITY),
+        MockMvcResultMatchers.jsonPath("$.image").value(IMAGE),
+        MockMvcResultMatchers.jsonPath("$.description").value(DESCRIPTION)
       );
 
     // 测试非法id的操作是否符合预期
@@ -157,12 +151,10 @@ public class CoffeeControllersTests {
         MockMvcRequestBuilders
           .put(BASE_URL)
           .content(testData.toString())
-          .contentType(MediaType.APPLICATION_JSON)
+          .contentType(JSON_CONTENT_TYPE)
       )
       .andExpect(MockMvcResultMatchers.status().isOk())
-      .andExpect(
-        MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
-      )
+      .andExpect(MockMvcResultMatchers.content().contentType(JSON_CONTENT_TYPE))
       .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("test"));
 
     // 测试非法id的操作是否符合预期
@@ -172,7 +164,7 @@ public class CoffeeControllersTests {
         MockMvcRequestBuilders
           .put(BASE_URL)
           .content(testData.toString())
-          .contentType(MediaType.APPLICATION_JSON)
+          .contentType(JSON_CONTENT_TYPE)
       )
       .andExpect(MockMvcResultMatchers.status().isNotFound());
   }
