@@ -70,11 +70,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		<!-- spring boot validation 数据验证依赖 -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>
 		<!-- swagger 生成在线API文档依赖 -->
 		<dependency>
 			<groupId>io.springfox</groupId>
