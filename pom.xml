@@ -50,11 +50,6 @@
 			<artifactId>fastjson</artifactId>
 			<version>1.2.71</version>
 		</dependency>
-		<!-- spring boot validation数据验证依赖 -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>
 		<!-- spring boot redis依赖 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
