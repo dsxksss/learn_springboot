@@ -8,9 +8,9 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - 3306:3306
+      - 3309:3306
     volumes:
-      - ./dockerDB/mysql:/var/lib/mysql
+      - ./dockerDB/mysql:/var/lib/docker/volumes/mysql_data
   redis:
     image: redis:latest
     # restart: always
@@ -18,7 +18,7 @@ services:
     command:
       --requirepass "root" #这一行是设置密码
     ports:
-      - 6379:6379
+      - 3310:6379
     volumes:
-      - ./dockerDB/redis:/var/lib/redis
-    # privileged: true      #使用该参数，container内的root拥有真正的root权限
+      - ./dockerDB/redis:/var/lib/docker/volumes/redis_data
+    privileged: true      #使用该参数，container内的root拥有真正的root权限

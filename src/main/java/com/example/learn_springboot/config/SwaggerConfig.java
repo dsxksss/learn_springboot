@@ -25,7 +25,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 */
 
 // 访问下方URL 进入api文档
-// http://localhost:2546/swagger-ui/index.html
+// http://localhost:3001/swagger-ui/index.html
 @Configuration
 public class SwaggerConfig {
 
