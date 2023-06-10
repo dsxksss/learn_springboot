@@ -1,12 +1,12 @@
 server:
     # 服务端口
-    port: 2546
+    port: 3001
 
 spring:
     datasource:
-        url: jdbc:mysql://localhost:3309/coffee?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
+        url: jdbc:mysql://localhost:3306/coffee?serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
         username: root
-        password: 2546
+        password: root
         driver-class-name: com.mysql.cj.jdbc.Driver
        # HikariCP 自定义连接池配置
         hikari:
@@ -33,9 +33,9 @@ spring:
         # Redis服务器地址
         host: localhost
         # Redis服务器连接端口
-        port: 3310
+        port: 6379
         # Redis服务器连接密码(默认为空)
-        password: 2546
+        password: root
         # 连接超时时间 (毫秒)
         timeout: 5000ms
         lettuce:

@@ -2,13 +2,13 @@ version: '3'
 
 services:
   mysql:
-    image: mysql:8.0.31
+    image: mysql:8.0.33
     # restart: always
     container_name: learn_springboot_mysql8
     environment:
-      MYSQL_ROOT_PASSWORD: 2546
+      MYSQL_ROOT_PASSWORD: root
     ports:
-      - 3309:3306
+      - 3306:3306
     volumes:
       - ./dockerDB/mysql:/var/lib/mysql
   redis:
@@ -16,9 +16,9 @@ services:
     # restart: always
     container_name: learn_springboot_redis
     command:
-      --requirepass "2546" #这一行是设置密码
+      --requirepass "root" #这一行是设置密码
     ports:
-      - 3310:6379
+      - 6379:6379
     volumes:
       - ./dockerDB/redis:/var/lib/redis
     # privileged: true      #使用该参数，container内的root拥有真正的root权限
