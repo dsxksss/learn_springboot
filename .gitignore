@@ -30,7 +30,7 @@ build/
 !**/src/test/**/build/
 
 ### docker ###
-db/
+dockerDB/
 
 ### log ###
 log/
